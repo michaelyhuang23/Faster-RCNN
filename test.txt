@@ -1,0 +1,31 @@
+loading annotations into memory...
+Done (t=0.74s)
+creating index...
+index created!
+loading annotations into memory...
+Done (t=17.48s)
+creating index...
+index created!
+Test:  [   0/5000]  eta: 3:52:27  model_time: 2.7536 (2.7536)  evaluator_time: 0.0189 (0.0189)  time: 2.7895  data: 0.0130  max mem: 517
+Test:  [1000/5000]  eta: 0:10:03  model_time: 0.1616 (0.1543)  evaluator_time: 0.0070 (0.0080)  time: 0.1221  data: 0.0111  max mem: 594
+Test:  [2000/5000]  eta: 0:07:29  model_time: 0.1666 (0.1535)  evaluator_time: 0.0080 (0.0081)  time: 0.1647  data: 0.0136  max mem: 594
+Test:  [3000/5000]  eta: 0:05:00  model_time: 0.1426 (0.1527)  evaluator_time: 0.0070 (0.0080)  time: 0.1524  data: 0.0122  max mem: 594
+Test:  [4000/5000]  eta: 0:02:31  model_time: 0.1486 (0.1534)  evaluator_time: 0.0070 (0.0086)  time: 0.1618  data: 0.0122  max mem: 594
+Test:  [4999/5000]  eta: 0:00:00  model_time: 0.1496 (0.1522)  evaluator_time: 0.0080 (0.0084)  time: 0.1373  data: 0.0113  max mem: 594
+Test: Total time: 0:12:29 (0.1499 s / it)
+Averaged stats: model_time: 0.1496 (0.1522)  evaluator_time: 0.0080 (0.0084)
+Accumulating evaluation results...
+DONE (t=8.48s).
+IoU metric: bbox
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.019
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.045
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.014
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.018
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.024
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.023
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.050
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.093
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.098
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.041
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.103
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.116
