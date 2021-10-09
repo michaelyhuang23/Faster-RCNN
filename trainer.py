@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 import sys
 
 orig_stdout = sys.stdout
-f = open('log-10-7.txt', 'w')
+f = open('log-10-9.txt', 'w')
 sys.stdout = f
 
 model = fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=True)
@@ -56,23 +56,23 @@ params = [p for p in model.parameters() if p.requires_grad]
 optimizer = torch.optim.Adam(params,lr=0.0001)
 #optimizer = torch.optim.SGD(params, lr=0.0002, momentum=0.9, weight_decay=0.0001)
 #model.load_state_dict(torch.load('fasterrcnn0.weights'))
-num_epochs = 18
+num_epochs = 10
 for epoch in range(num_epochs):
     train_one_epoch(writer, model, optimizer, val, device, epoch, print_freq=1000)
     evaluate(writer, model, val, device, print_freq=1000)
-    torch.save(model.state_dict(), f'fasterrcnn1.weights')
+    torch.save(model.state_dict(), f'fasterrcnn_val1.weights')
 
-device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-model.to(device)
-params = [p for p in model.parameters() if p.requires_grad]
-optimizer = torch.optim.Adam(params,lr=0.0001)
-#optimizer = torch.optim.SGD(params, lr=0.02, momentum=0.9, weight_decay=0.0001)
-#model.load_state_dict(torch.load('fasterrcnn0.weights'))
-num_epochs = 18
-for epoch in range(num_epochs):
-    train_one_epoch(model, optimizer, train, device, epoch, print_freq=10000)
-    evaluate(model, val, device, print_freq=1000)
-    torch.save(model.state_dict(), f'fasterrcnn2.weights')
+# device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+# model.to(device)
+# params = [p for p in model.parameters() if p.requires_grad]
+# optimizer = torch.optim.Adam(params,lr=0.0001)
+# #optimizer = torch.optim.SGD(params, lr=0.02, momentum=0.9, weight_decay=0.0001)
+# #model.load_state_dict(torch.load('fasterrcnn0.weights'))
+# num_epochs = 18
+# for epoch in range(num_epochs):
+#     train_one_epoch(model, optimizer, train, device, epoch, print_freq=10000)
+#     evaluate(model, val, device, print_freq=1000)
+#     torch.save(model.state_dict(), f'fasterrcnn_train1.weights')
 
 sys.stdout = orig_stdout
 f.close()
