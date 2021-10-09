@@ -50,7 +50,7 @@ train = DataLoader(trainset,batch_size = 1, shuffle=True, collate_fn=utils.colla
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 model.to(device)
-model.load_state_dict(torch.load('fasterrcnn1.weights'))
+#model.load_state_dict(torch.load('fasterrcnn1.weights'))
 writer = SummaryWriter()
 params = [p for p in model.parameters() if p.requires_grad]
 optimizer = torch.optim.Adam(params,lr=0.0001)
