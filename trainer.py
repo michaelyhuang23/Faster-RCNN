@@ -49,6 +49,9 @@ val = DataLoader(valset,batch_size = 1, shuffle=True, collate_fn=utils.collate_f
 train = DataLoader(trainset,batch_size = 1, shuffle=True, collate_fn=utils.collate_fn)
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+print(f'running on {device}')
+device_id = torch.cuda.current_device()
+print(f'using gpu {torch.cuda.get_device_name(device_id)}')
 model.to(device)
 model.load_state_dict(torch.load('fasterrcnn1.weights'))
 writer = SummaryWriter()
