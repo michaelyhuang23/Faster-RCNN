@@ -8,11 +8,11 @@ import utils
 from engine import train_one_epoch, evaluate
 from torch.utils.tensorboard import SummaryWriter
 
-import sys
+#import sys
 
-orig_stdout = sys.stdout
-f = open('log-10-9.txt', 'w')
-sys.stdout = f
+#orig_stdout = sys.stdout
+#f = open('log-10-9.txt', 'w')
+#sys.stdout = f
 
 model = fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=True)
 
@@ -77,5 +77,5 @@ for epoch in range(num_epochs):
 #     evaluate(model, val, device, print_freq=1000)
 #     torch.save(model.state_dict(), f'fasterrcnn_train1.weights')
 
-sys.stdout = orig_stdout
-f.close()
+#sys.stdout = orig_stdout
+#f.close()
