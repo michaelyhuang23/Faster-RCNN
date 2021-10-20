@@ -2,7 +2,7 @@ import math
 import sys
 import time
 import torch
-
+import gc
 import torchvision.models.detection.mask_rcnn
 
 from coco_utils import get_coco_api_from_dataset
@@ -60,38 +60,40 @@ def _get_iou_types(model):
 
 @torch.no_grad()
 def evaluate(writer, model, data_loader, device, print_freq = 100):
-    cpu_device = torch.device("cpu")
-    model.eval()
-    metric_logger = utils.MetricLogger(delimiter="  ")
-    header = 'Test:'
+    with torch.no_grad():
+        cpu_device = torch.device("cpu")
+        model.eval()
+        metric_logger = utils.MetricLogger(delimiter="  ")
+        header = 'Test:'
 
-    coco = get_coco_api_from_dataset(data_loader.dataset)
-    iou_types = _get_iou_types(model)
-    coco_evaluator = CocoEvaluator(coco, iou_types)
+        coco = get_coco_api_from_dataset(data_loader.dataset)
+        iou_types = _get_iou_types(model)
+        coco_evaluator = CocoEvaluator(coco, iou_types)
 
-    for images, targets in metric_logger.log_every(data_loader, print_freq, header):
-        images = list(img.to(device) for img in images)
-        print(sum(image.element_size() * image.nelement() for image in images))
-        if torch.cuda.is_available():
-            torch.cuda.synchronize()
-        model_time = time.time()
-        outputs = model(images)
-        del images
-        outputs = [{k: v.to(cpu_device) for k, v in t.items()} for t in outputs]
-        model_time = time.time() - model_time
+        for images, targets in metric_logger.log_every(data_loader, print_freq, header):
+            images = list(img.to(device) for img in images)
+            print(sum(image.element_size() * image.nelement() for image in images))
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            model_time = time.time()
+            outputs = model(images)
+            del images
+            gc.collect()
+            outputs = [{k: v.to(cpu_device) for k, v in t.items()} for t in outputs]
+            model_time = time.time() - model_time
 
-        res = {target["image_id"].item(): output for target, output in zip(targets, outputs)}
-        evaluator_time = time.time()
-        coco_evaluator.update(res)
-        evaluator_time = time.time() - evaluator_time
-        metric_logger.update(model_time=model_time, evaluator_time=evaluator_time)
+            res = {target["image_id"].item(): output for target, output in zip(targets, outputs)}
+            evaluator_time = time.time()
+            coco_evaluator.update(res)
+            evaluator_time = time.time() - evaluator_time
+            metric_logger.update(model_time=model_time, evaluator_time=evaluator_time)
 
-    # gather the stats from all processes
-    metric_logger.synchronize_between_processes()
-    print("Averaged stats:", metric_logger)
-    coco_evaluator.synchronize_between_processes()
+        # gather the stats from all processes
+        metric_logger.synchronize_between_processes()
+        print("Averaged stats:", metric_logger)
+        coco_evaluator.synchronize_between_processes()
 
-    # accumulate predictions from all images
-    coco_evaluator.accumulate()
-    coco_evaluator.summarize()
-    return coco_evaluator
+        # accumulate predictions from all images
+        coco_evaluator.accumulate()
+        coco_evaluator.summarize()
+        return coco_evaluator

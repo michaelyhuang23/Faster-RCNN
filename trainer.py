@@ -71,9 +71,9 @@ optimizer = torch.optim.SGD(params, lr=0.02, momentum=0.9, weight_decay=0.0001)
 lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[8,11], gamma=0.1)
 #model.load_state_dict(torch.load('fasterrcnn_train3.weights'))
 evaluate(writer, model, val, device, print_freq=100)
-num_epochs = 20
-for epoch in range(num_epochs):
-    train_one_epoch(writer, model, optimizer, train, device, epoch, print_freq=1000)
-    evaluate(writer, model, val, device, print_freq=100)
-    torch.save(model.state_dict(), f'fasterrcnn_train6.weights')
+# num_epochs = 20
+# for epoch in range(num_epochs):
+#     train_one_epoch(writer, model, optimizer, train, device, epoch, print_freq=1000)
+#     evaluate(writer, model, val, device, print_freq=100)
+#     torch.save(model.state_dict(), f'fasterrcnn_train6.weights')
 
