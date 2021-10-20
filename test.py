@@ -25,7 +25,7 @@ class DetectDataset(CocoDetection):
                 if img != None and anno != None:
                     new_valid_index.append(i)
             self.valid_index = new_valid_index
-            with open('valid_indices_coco', 'wb') as f:
+            with open('val_valid_indices_coco', 'wb') as f:
                 pickle.dump(self.valid_index, f)
         else:
             with open(indices_file,'rb') as f:
@@ -56,12 +56,12 @@ class DetectDataset(CocoDetection):
         return len(self.valid_index)
 
 valset = DetectDataset('val2017', 'annotations/instances_val2017.json')
-trainset = DetectDataset('train2017', 'annotations/instances_train2017.json')
+#trainset = DetectDataset('train2017', 'annotations/instances_train2017.json')
 
-val = DataLoader(valset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
-train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
+# val = DataLoader(valset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
+# train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
 
-img, anno = next(iter(val))
+# img, anno = next(iter(val))
 
-print(len(img))
-print(len(anno))
+# print(len(img))
+# print(len(anno))
