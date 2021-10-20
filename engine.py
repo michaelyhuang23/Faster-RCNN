@@ -71,12 +71,12 @@ def evaluate(writer, model, data_loader, device, print_freq = 100):
 
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
         images = list(img.to(device) for img in images)
-
+        print(sum(image.element_size() * image.nelement() for image in images))
         if torch.cuda.is_available():
             torch.cuda.synchronize()
         model_time = time.time()
         outputs = model(images)
-
+        del images
         outputs = [{k: v.to(cpu_device) for k, v in t.items()} for t in outputs]
         model_time = time.time() - model_time
 
