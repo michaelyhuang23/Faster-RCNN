@@ -15,7 +15,7 @@ class DetectDataset(CocoDetection):
         super().__init__(root, annFile, transforms.ToTensor())
         self.novel_cls = [1, 17, 16, 21, 18, 19, 20, 2, 9, 6, 3, 4, 7, 44, 62, 67, 64, 63, 72]
         self.base_cls = [i for i in range(1,91) if i not in self.novel_cls]
-        self.valid_index = [range(super().__len__())]
+        self.valid_index = list(range(super().__len__()))
         new_valid_index = []
         for i in range(super().__len__()):
             img, anno = self[i]
