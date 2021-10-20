@@ -55,13 +55,13 @@ class DetectDataset(CocoDetection):
     def __len__(self):
         return len(self.valid_index)
 
-valset = DetectDataset('val2017', 'annotations/instances_val2017.json')
-trainset = DetectDataset('train2017', 'annotations/instances_train2017.json')
+trainset = DetectDataset('train2017', 'annotations/instances_train2017.json', 'valid_indices_coco')
 
-val = DataLoader(valset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
 train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
 
-img, anno = next(iter(val))
+print(len(train))
+for img, anno in train:
+    assert(len(anno)>0)
+    for ann in anno:
+        assert(len(ann['labels'])>0)
 
-print(len(img))
-print(len(anno))
