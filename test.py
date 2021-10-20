@@ -25,7 +25,7 @@ class DetectDataset(CocoDetection):
                 if img != None and anno != None:
                     new_valid_index.append(i)
             self.valid_index = new_valid_index
-            with open('valid_indices_coco', 'wb') as f:
+            with open('val_valid_indices_coco', 'wb') as f:
                 pickle.dump(self.valid_index, f)
         else:
             with open(indices_file,'rb') as f:
