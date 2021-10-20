@@ -15,7 +15,16 @@ class DetectDataset(CocoDetection):
         super().__init__(root, annFile, transforms.ToTensor())
         self.novel_cls = [1, 17, 16, 21, 18, 19, 20, 2, 9, 6, 3, 4, 7, 44, 62, 67, 64, 63, 72]
         self.base_cls = [i for i in range(1,91) if i not in self.novel_cls]
+        self.valid_index = [range(super().__len__())]
+        new_valid_index = []
+        for i in range(super().__len__()):
+            img, anno = self[i]
+            if img != None and anno != None:
+                new_valid_index.append(i)
+        self.valid_index = new_valid_index
+
     def __getitem__(self, index):
+        index = self.valid_index[index]
         img, target = super().__getitem__(index)
         if target is None or len(target)==0:
             return None, None
@@ -31,31 +40,32 @@ class DetectDataset(CocoDetection):
                 continue
             nTarget['boxes'].append(box)
             nTarget['labels'].append(cate)
+        if len(nTarget['labels']) == 0:
+            return None, None
         nTarget = {key:torch.tensor(val) for key, val in nTarget.items()}
         return img, nTarget
     def __len__(self):
-        return super().__len__()
+        return len(self.valid_index)
 
 valset = DetectDataset('val2017', 'annotations/instances_val2017.json')
 trainset = DetectDataset('train2017', 'annotations/instances_train2017.json')
 
-val = DataLoader(valset,batch_size = 1, shuffle=True, collate_fn=utils.collate_fn)
-train = DataLoader(trainset,batch_size = 1, shuffle=True, collate_fn=utils.collate_fn)
+val = DataLoader(valset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
+train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 print(f'running on {device}')
 device_id = torch.cuda.current_device()
 print(f'using gpu {torch.cuda.get_device_name(device_id)}')
 model.to(device)
-#model.load_state_dict(torch.load('fasterrcnn_val1.weights'))
 writer = SummaryWriter()
 params = [p for p in model.parameters() if p.requires_grad]
-optimizer = torch.optim.Adam(params,lr=0.0001)
-#optimizer = torch.optim.SGD(params, lr=0.0002, momentum=0.9, weight_decay=0.0001)
-model.load_state_dict(torch.load('fasterrcnn_train3.weights'))
-num_epochs = 10
+optimizer = torch.optim.SGD(params, lr=0.02, momentum=0.9, weight_decay=0.0001)
+lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[8,11], gamma=0.1)
+#model.load_state_dict(torch.load('fasterrcnn_train3.weights'))
+num_epochs = 20
 for epoch in range(num_epochs):
     train_one_epoch(writer, model, optimizer, train, device, epoch, print_freq=10000)
     evaluate(writer, model, val, device, print_freq=1000)
-    torch.save(model.state_dict(), f'fasterrcnn_train4.weights')
+    torch.save(model.state_dict(), f'fasterrcnn_train6.weights')
 

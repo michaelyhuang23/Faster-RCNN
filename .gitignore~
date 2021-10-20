@@ -1,0 +1,4 @@
+annotations/
+train2017/
+val2017/
+*.weights

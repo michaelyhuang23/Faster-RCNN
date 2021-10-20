@@ -17,14 +17,6 @@ def train_one_epoch(writer, model, optimizer, data_loader, device, epoch, print_
     header = 'Epoch: [{}]'.format(epoch)
 
     for i, (images, targets) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
-        if targets == None:
-            continue
-        if len(targets) == 0:
-            continue
-        if targets[0] is None:
-            continue
-        if targets[0]['labels'].shape[0] == 0:
-            continue
         images = list(image.to(device) for image in images)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         loss_dict = model(images, targets)
@@ -74,14 +66,6 @@ def evaluate(writer, model, data_loader, device, print_freq = 100):
     coco_evaluator = CocoEvaluator(coco, iou_types)
 
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
-        if targets is None:
-            continue
-        if len(targets) == 0:
-            continue
-        if targets[0] is None:
-            continue
-        if targets[0]['labels'].shape[0] == 0:
-            continue
         images = list(img.to(device) for img in images)
 
         if torch.cuda.is_available():
