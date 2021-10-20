@@ -17,23 +17,31 @@ def train_one_epoch(writer, model, optimizer, data_loader, device, epoch, print_
     header = 'Epoch: [{}]'.format(epoch)
 
     for i, (images, targets) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
-        images = list(image.to(device) for image in images)
-        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
-        loss_dict = model(images, targets)
-        losses = sum(loss for loss in loss_dict.values())
-
-        loss_val = losses.cpu().detach().item()
-        if not math.isfinite(loss_val):
-            print("Loss is {}, stopping training".format(loss_val))
-            print(loss_val)
-            sys.exit(1)
-
+        assert(len(images) == len(targets))
         optimizer.zero_grad()
-        losses.backward()
-        optimizer.step()
-        writer.add_scalar('Loss/train', losses.cpu().detach().item(), epoch*len(data_loader)+i)
-        metric_logger.update(loss=loss_val, **loss_dict.detach())
+        # pseudo batch
+        loss_sum = []
+        for img, tar in zip(images, targets):
+            imgs = [img]
+            tars = [tar]
+            imgs = list(image.to(device) for image in imgs)
+            tars = [{k: v.to(device) for k, v in t.items()} for t in tars]
+            loss_dict = model(imgs, tars)
+            losses = sum(loss for loss in loss_dict.values())
+
+            loss_val = losses.cpu().detach().item()
+            loss_sum.append(loss_val)
+            if not math.isfinite(loss_val):
+                print("Loss is {}, stopping training".format(loss_val))
+                print(loss_val)
+                sys.exit(1)
+
+            losses.backward()
+        loss_val = sum(loss_sum)/len(loss_sum)
+        writer.add_scalar('Loss/train', loss_val, epoch*len(data_loader)+i)
+        metric_logger.update(loss=loss_val)
         metric_logger.update(lr=optimizer.param_groups[0]["lr"])
+        optimizer.step()
 
     return metric_logger
 
