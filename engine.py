@@ -41,6 +41,7 @@ def train_one_epoch(writer, model, optimizer, data_loader, device, epoch, print_
         writer.add_scalar('Loss/train', loss_val, epoch*len(data_loader)+i)
         metric_logger.update(loss=loss_val)
         metric_logger.update(lr=optimizer.param_groups[0]["lr"])
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
     gc.collect()
     return metric_logger
