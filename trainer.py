@@ -57,8 +57,8 @@ class DetectDataset(CocoDetection):
 valset = DetectDataset('val2017', 'annotations/instances_val2017.json', 'val_valid_indices_coco')
 trainset = DetectDataset('train2017', 'annotations/instances_train2017.json', 'valid_indices_coco')
 
-val = DataLoader(valset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
-train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
+val = DataLoader(valset,batch_size = 8, shuffle=True, collate_fn=utils.collate_fn)
+train = DataLoader(trainset,batch_size = 8, shuffle=True, collate_fn=utils.collate_fn)
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 print(f'running on {device}')
