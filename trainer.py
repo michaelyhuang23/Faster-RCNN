@@ -58,7 +58,7 @@ valset = DetectDataset('val2017', 'annotations/instances_val2017.json', 'val_val
 trainset = DetectDataset('train2017', 'annotations/instances_train2017.json', 'valid_indices_coco')
 
 val = DataLoader(valset,batch_size = 8, shuffle=True, collate_fn=utils.collate_fn)
-train = DataLoader(trainset,batch_size = 8, shuffle=True, collate_fn=utils.collate_fn)
+train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 print(f'running on {device}')
@@ -70,10 +70,10 @@ params = [p for p in model.parameters() if p.requires_grad]
 optimizer = torch.optim.SGD(params, lr=0.02, momentum=0.9, weight_decay=0.0001)
 lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[8,11], gamma=0.1)
 #model.load_state_dict(torch.load('fasterrcnn_train3.weights'))
-evaluate(writer, model, val, device, print_freq=100)
-# num_epochs = 20
-# for epoch in range(num_epochs):
-#     train_one_epoch(writer, model, optimizer, train, device, epoch, print_freq=1000)
-#     evaluate(writer, model, val, device, print_freq=100)
-#     torch.save(model.state_dict(), f'fasterrcnn_train6.weights')
+#evaluate(writer, model, val, device, print_freq=100)
+num_epochs = 20
+for epoch in range(num_epochs):
+    train_one_epoch(writer, model, optimizer, train, device, epoch, print_freq=1000)
+    evaluate(writer, model, val, device, print_freq=100)
+    torch.save(model.state_dict(), f'fasterrcnn_train6.weights')
 
