@@ -47,8 +47,8 @@ class DetectDataset(CocoDetection):
     def __len__(self):
         return len(self.valid_index)
 
-valset = DetectDataset('val2017', 'annotations/instances_val2017.json')
-trainset = DetectDataset('train2017', 'annotations/instances_train2017.json')
+valset = DetectDataset('val2017', 'annotations/instances_val2017.json', 'val_valid_indices_coco')
+trainset = DetectDataset('train2017', 'annotations/instances_train2017.json', 'valid_indices_coco')
 
 val = DataLoader(valset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
 train = DataLoader(trainset,batch_size = 16, shuffle=True, collate_fn=utils.collate_fn)
